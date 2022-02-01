@@ -1,0 +1,30 @@
+FINITE STATE MACHINE:
+RST -> INIT ->
+	-> CMD0  -> SEND_CMD -> WAIT_RESPONSE -> READ_MISO return
+	-> CHECK_RESPONSE_CMD0 ->
+	-> CMD55 -> SEND_CMD -> WAIT_RESPONSE -> READ_MISO return
+	-> CMD41 -> SEND_CMD -> WAIT_RESPONSE -> READ_MISO return
+	-> CHECK_RESPONSE_CMD41 ->
+			
+	-> CMD_READ (CMD17) -> SEND_CMD -> WAIT_RESPONSE -> READ_MISO return
+	-> WAIT_DATA (wait for data packet) -> READ_MISO (reads 1 byte) return
+	-> READ_DATA -> READ_MISO (reads 512 bytov - DATA) return
+	-> READ_CRC -> READ_MISO (reads 1 byte - CRC) return
+	-> (loop to CMD_READ)
+
+
+set return_state:
+	-before SEND_CMD
+	-in states: WAIT_DATA, READ_DATA, READ_CRC
+
+
+FREQUENCIES:
+100 000 000Hz	SYSTEM
+ 25 000 000Hz	SD operations
+ 12 500 000Hz	SCLK			(SPI)
+     44 100Hz	RAM_read
+
+
+DATA:
+WAV has metadata (mono samples start at 44B - x"0000002C")
+just read the metadata, it can't be heard because it is too small
